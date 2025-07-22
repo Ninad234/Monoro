@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Login from "./Login";
 import { useAuth } from "./../context/AuthProvider";
 import Logout from "./Logout";
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [authUser, setAuthUser] = useAuth();
@@ -15,6 +16,7 @@ const Navbar = () => {
 
   const [sticky, setsticky] = useState(false);
   const element = document.documentElement;
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     if (theme === "dark") {
@@ -42,6 +44,18 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
@@ -49,29 +63,22 @@ const Navbar = () => {
   const navItems = (
     <>
       <li>
-        <a href="/">Home</a>
+        <a href="/" className="text-black font-bold hover:bg-gray-500 hover:text-white">Home</a>
       </li>
       <li>
-        <a href="/collection">Collection</a>
+        <a href="/collection" className="text-black font-bold hover:bg-gray-500 hover:text-white">Collection</a>
       </li>
       <li>
-        <a>About</a>
+        <a href="/about" className="text-black font-bold hover:bg-gray-500 hover:text-white">About</a>
       </li>
       <li>
-        <a>Contact us</a>
+        <a href="/contact" className="text-black font-bold hover:bg-gray-500 hover:text-white">Contact us</a>
       </li>
     </>
   );
   return (
-    <>
-      <div
-        className={`max-w-screen-2xl container mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 ${
-          sticky
-            ? "sticky-nav shadow-md bg-base-300 duration-300 transition-all ease-in-out"
-            : ""
-        }`}
-      >
-        <div className="navbar">
+    <nav className={`w-full navbar shadow-md sticky top-0 z-50 transition-colors duration-300 mb-8 ${scrolled ? 'bg-gray-100' : 'bg-base-100'}`}>
+      <div className="w-full flex items-center justify-between m-0 p-0">
           <div className="navbar-start">
             <div className="dropdown">
               <div
@@ -97,7 +104,7 @@ const Navbar = () => {
               </div>
               <ul
                 tabIndex={0}
-                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+                className="menu menu-sm dropdown-content bg-base-300 rounded-box z-[1] mt-3 w-52 p-2 shadow-md"
               >
                 {navItems}
               </ul>
@@ -168,6 +175,12 @@ const Navbar = () => {
                 <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
               </svg>
             </label>
+            <Link to="/cart" className="ml-4 flex items-center hover:text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437m0 0L7.5 15.75A2.25 2.25 0 009.66 18h7.59a2.25 2.25 0 002.16-1.59l2.25-7.5A1.125 1.125 0 0020.25 6H6.272m-1.166 0L4.5 4.5m0 0L3.75 3m.75 1.5h16.5" />
+              </svg>
+            </Link>
+            <Link to="/orders" className="ml-4 font-semibold hover:text-primary">Orders</Link>
 
             {authUser ? (
               <div className="flex items-center space-x-2">
@@ -194,8 +207,7 @@ const Navbar = () => {
             )}
           </div>
         </div>
-      </div>
-    </>
+    </nav>
   );
 };
 

@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 // import list from "../assets/list.json";
 import Cards from "../components/Cards";
+import { useCart } from '../context/CartProvider';
+import toast, {Toaster} from 'react-hot-toast';
+import { useAuth } from '../context/AuthProvider';
 
 const Collection = () => {
   const [products, setProducts] = useState([]);
+  const { addToCart } = useCart();
+  const [authUser] = useAuth();
   useEffect(() => {
      const getProducts = async () => {
     try {
@@ -17,10 +22,21 @@ const Collection = () => {
      };
     getProducts();
   }, [])
+
+
+  const handleAddToCart = (item) => {
+    if (!authUser) {
+      toast.error('Please log in to add products to cart!', { icon: '🔒' });
+      return;
+    }
+    addToCart(item);
+    toast.success('Your product has been added to cart!');
+  };
+  
   
   return (
     <>
-      <div className="max-w-screen-2xl container mx-auto md:px-20 py-4 px-4">
+      <div className="w-full py-4 px-4 md:px-8">
         <div className="mt-28 items-center justify-center text-center">
           <h1 className="text-2xl font-bold md:text-5xl">
             We're Delighted to have you here
@@ -42,9 +58,9 @@ const Collection = () => {
             every mood, occasion, and personality.
           </p>
         </div>
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {products.map((item) => (
-              <Cards key={item.id} item={item} />
+              <Cards key={item._id} item={item} onAddToCart={handleAddToCart} />
             ))}
         </div>
       </div>

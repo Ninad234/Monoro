@@ -7,12 +7,14 @@ import Footer from '../components/Footer'
 const Home = () => {
   return (
     <>
-    <Navbar/>
-    <Banner/>
-    <LatestCollection/>
-    <Footer/>
+    <Navbar />
+    <div className="w-full px-4 md:px-8">
+      <Banner />
+      <LatestCollection/>
+      <Footer />
+    </div>
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

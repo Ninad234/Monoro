@@ -4,6 +4,10 @@ import mongoose from "mongoose";
 import cors from "cors"
 import ProductRoute from './route/product.route.js';
 import userRoute from './route/user.route.js'
+import cartRoute from './route/cart.route.js';
+import paymentRoute from './route/payment.route.js';
+import orderRoute from './route/order.route.js';
+import contactRoute from './route/contact.route.js';
 const app = express();
 
 app.use(cors());
@@ -29,6 +33,10 @@ try {
 app.use("/product",ProductRoute);
 
 app.use("/users",userRoute);
+app.use("/cart", cartRoute);
+app.use("/payment", paymentRoute);
+app.use("/orders", orderRoute);
+app.use("/contact", contactRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

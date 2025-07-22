@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import axios from "axios"
+import axios from "axios";
 import Slider from "react-slick";
 import Cards from "./Cards";
-
+import { useCart } from '../context/CartProvider';
+import { useAuth } from '../context/AuthProvider';
+import toast from 'react-hot-toast';
 
 const LatestCollection = () => {
   const [products, setProducts] = useState([]);
+  const { addToCart } = useCart();
+  const [authUser] = useAuth();
+
   useEffect(() => {
     const getProducts = async () => {
       try {
@@ -16,14 +21,25 @@ const LatestCollection = () => {
         console.log(data2)
         setProducts(data2)
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
     getProducts();
-  }, [])
-  
-  // const Filterdata = filter((item)=> item.category === "Flat 28% OFF");
-  // console.log(Filterdata);
+  }, []);
+
+  const filteredProducts = products.filter(
+    item => item.category && item.category.toLowerCase() === 'flat 28% off'
+  );
+
+  const handleAddToCart = (item) => {
+    if (!authUser) {
+      toast.error('Please log in to add products to cart!', { icon: '🔒' });
+      return;
+    }
+    addToCart(item);
+    toast.success('Your product has been added to cart!');
+  };
+
   var settings = {
     dots: true,
     infinite: false,
@@ -60,22 +76,24 @@ const LatestCollection = () => {
   };
   return (
     <>
-      <div className="max-w-screen-2xl container mx-auto md:px-20 py-4 px-4 mb-12">
+      <div className="w-full px-4 md:px-8 py-4 mb-12">
         <div className="mb-5">
           <h1 className="text-black bg-white text-2xl mb-4 font-bold">Best Offers !!</h1>
-        <p className="text-black bg-white text-xl space-y-2">
-          Upgrade your wardrobe without breaking the bank!
-          <br/>
-          <b>Hurry!</b> Limited-time offer. <b>Enjoy Flat 28% OFF </b>on our Free Collection!
-        </p>
+          <p className="text-black bg-white text-xl space-y-2">
+            Upgrade your wardrobe without breaking the bank!
+            <br />
+            <b>Hurry!</b> Limited-time offer. <b>Enjoy Flat 28% OFF </b>on our Free Collection!
+          </p>
         </div>
-      <div>
-        <Slider {...settings}>
-        {products.map((item)=> (
-          <Cards item={item} key={item.id}/>
+        <div>
+          <Slider {...settings}>
+        {filteredProducts.map((item)=> (
+          <div key={item.id || item._id} className="px-3"> 
+             <Cards item={item} onAddToCart={handleAddToCart}/>
+        </div>
         ))}
       </Slider>
-      </div>
+        </div>
       </div>
     </>
   );
