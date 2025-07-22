@@ -1,8 +1,23 @@
-import React from "react";
-import list from "../assets/list.json";
+import { useEffect, useState } from "react";
+import axios from "axios";
+// import list from "../assets/list.json";
 import Cards from "../components/Cards";
 
 const Collection = () => {
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+     const getProducts = async () => {
+    try {
+      const res = await axios.get("http://localhost:4001/product") 
+      console.log(res.data)
+      setProducts(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+     };
+    getProducts();
+  }, [])
+  
   return (
     <>
       <div className="max-w-screen-2xl container mx-auto md:px-20 py-4 px-4">
@@ -28,7 +43,7 @@ const Collection = () => {
           </p>
         </div>
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {list.map((item) => (
+            {products.map((item) => (
               <Cards key={item.id} item={item} />
             ))}
         </div>

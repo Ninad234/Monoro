@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import list from '../assets/list.json';
+import axios from "axios"
 import Slider from "react-slick";
 import Cards from "./Cards";
 
 
 const LatestCollection = () => {
-  const Filterdata = list.filter((item)=> item.category === "Flat 28% OFF");
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const res = await axios.get("http://localhost:4001/product")
+        const data2 = res.data.filter((item)=> item.category === "Flat 28% OFF")
+        console.log(data2)
+        setProducts(data2)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getProducts();
+  }, [])
+  
+  // const Filterdata = filter((item)=> item.category === "Flat 28% OFF");
   // console.log(Filterdata);
   var settings = {
     dots: true,
@@ -56,7 +71,7 @@ const LatestCollection = () => {
         </div>
       <div>
         <Slider {...settings}>
-        {Filterdata.map((item)=> (
+        {products.map((item)=> (
           <Cards item={item} key={item.id}/>
         ))}
       </Slider>
